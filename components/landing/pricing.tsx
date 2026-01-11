@@ -128,11 +128,11 @@ export function Pricing({ plans }: PricingProps) {
                   {plan.name}
                 </h3>
                 <p className="text-sm text-white/50 mb-4 capitalize">{plan.description}</p>
-                <div className="flex items-baseline justify-center gap-1">
+                <div className="flex items-baseline justify-center gap-2">
                   <span className="text-5xl font-extrabold text-brand-orange">
                     {plan.price.toLocaleString("tr-TR")} ₺
                   </span>
-                  <span className="text-white/50">{t.pricing.perMonth}</span>
+                  <span className="text-lg text-white/70">{t.pricing.perMonth}</span>
                 </div>
               </div>
 
