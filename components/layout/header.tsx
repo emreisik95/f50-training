@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/lib/i18n";
 
 interface HeaderProps {
   userName: string;
@@ -22,6 +23,7 @@ interface HeaderProps {
 export function Header({ userName, userRole }: HeaderProps) {
   const { signOut } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -37,9 +39,9 @@ export function Header({ userName, userRole }: HeaderProps) {
     .slice(0, 2);
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-brand-navy border-b border-white/10">
       <div className="flex h-16 items-center justify-between px-6">
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/10">
           <Menu className="h-5 w-5" />
         </Button>
 
@@ -48,25 +50,34 @@ export function Header({ userName, userRole }: HeaderProps) {
         <div className="flex items-center gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback>{initials}</AvatarFallback>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-white/10">
+                <Avatar className="h-10 w-10 bg-brand-orange">
+                  <AvatarFallback className="bg-brand-orange text-white font-semibold">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuContent
+              className="w-56 bg-brand-navy border-white/10"
+              align="end"
+              forceMount
+            >
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{userName}</p>
-                  <p className="text-xs leading-none text-muted-foreground capitalize">
+                  <p className="text-sm font-medium leading-none text-white">{userName}</p>
+                  <p className="text-xs leading-none text-white/50 capitalize">
                     {userRole?.replace("_", " ") || "Staff"}
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut}>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem
+                onClick={handleSignOut}
+                className="text-white/70 focus:bg-white/10 focus:text-white cursor-pointer"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Sign out</span>
+                <span>{t.dashboard.signOut}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

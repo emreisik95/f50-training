@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { LanguageProvider } from "@/lib/i18n";
 import type { UserRole } from "@/lib/types/database.types";
 
 interface StaffUser {
@@ -39,22 +40,24 @@ export default async function DashboardLayout({
   }
 
   return (
-    <AuthProvider>
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar
-          userRole={staffUser.role}
-          userName={staffUser.full_name}
-        />
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <Header
-            userName={staffUser.full_name}
+    <LanguageProvider>
+      <AuthProvider>
+        <div className="flex h-screen overflow-hidden bg-brand-navy">
+          <Sidebar
             userRole={staffUser.role}
+            userName={staffUser.full_name}
           />
-          <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
-            {children}
-          </main>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <Header
+              userName={staffUser.full_name}
+              userRole={staffUser.role}
+            />
+            <main className="flex-1 overflow-y-auto p-6 bg-brand-navy-light">
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
-    </AuthProvider>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

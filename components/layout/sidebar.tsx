@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -17,12 +18,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import type { UserRole } from "@/lib/types/database.types";
-
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
-  name: string;
+  nameKey: keyof typeof import("@/lib/i18n/translations").translations.tr.sidebar;
   href: string;
   icon: LucideIcon;
   allowedRoles: UserRole[];
@@ -30,49 +32,49 @@ interface NavItem {
 
 const navigation: NavItem[] = [
   {
-    name: "Dashboard",
+    nameKey: "dashboard",
     href: "/admin",
     icon: LayoutDashboard,
     allowedRoles: ["front_desk", "coach", "admin"],
   },
   {
-    name: "Members",
+    nameKey: "members",
     href: "/admin/members",
     icon: Users,
     allowedRoles: ["front_desk", "coach", "admin"],
   },
   {
-    name: "Memberships",
+    nameKey: "memberships",
     href: "/admin/memberships",
     icon: CreditCard,
     allowedRoles: ["front_desk", "admin"],
   },
   {
-    name: "Plans",
+    nameKey: "plans",
     href: "/admin/plans",
     icon: Package,
     allowedRoles: ["admin"],
   },
   {
-    name: "Payments",
+    nameKey: "payments",
     href: "/admin/payments",
     icon: DollarSign,
     allowedRoles: ["front_desk", "admin"],
   },
   {
-    name: "Classes",
+    nameKey: "classes",
     href: "/admin/classes",
     icon: Calendar,
     allowedRoles: ["coach", "admin"],
   },
   {
-    name: "Devices",
+    nameKey: "devices",
     href: "/admin/devices",
     icon: Scan,
     allowedRoles: ["admin"],
   },
   {
-    name: "Settings",
+    nameKey: "settings",
     href: "/admin/settings",
     icon: Settings,
     allowedRoles: ["admin"],
@@ -88,6 +90,7 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { signOut } = useAuth();
+  const { t } = useLanguage();
 
   const filteredNavigation = navigation.filter(
     (item) => userRole && item.allowedRoles.includes(userRole)
@@ -101,54 +104,74 @@ export function Sidebar({ userRole, userName }: SidebarProps) {
 
   return (
     <div className="hidden md:flex md:w-64 md:flex-col">
-      <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-slate-900">
-        <div className="flex items-center flex-shrink-0 px-4">
-          <h1 className="text-2xl font-bold text-white">F50 Gym</h1>
+      <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-brand-navy">
+        {/* Logo */}
+        <div className="flex items-center flex-shrink-0 px-4 -ml-4">
+          <Link href="/">
+            <Image
+              src="/f50-logo.png"
+              alt="F50 Training"
+              width={120}
+              height={120}
+              className="h-20 w-auto"
+            />
+          </Link>
         </div>
-        <nav className="mt-8 flex-1 px-2 space-y-1">
+
+        {/* Navigation */}
+        <nav className="mt-6 flex-1 px-3 space-y-1">
           {filteredNavigation.map((item) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(item.href + "/");
             return (
               <Link
-                key={item.name}
+                key={item.nameKey}
                 href={item.href}
                 className={cn(
-                  "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
+                  "group flex items-center px-3 py-2.5 text-base font-medium rounded-lg transition-all duration-200",
                   isActive
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                    ? "bg-brand-orange text-white shadow-lg shadow-brand-orange/25"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
                 )}
               >
                 <item.icon
                   className={cn(
-                    "mr-3 h-5 w-5 flex-shrink-0",
+                    "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
                     isActive
                       ? "text-white"
-                      : "text-slate-400 group-hover:text-white"
+                      : "text-white/50 group-hover:text-white"
                   )}
                 />
-                {item.name}
+                {t.sidebar[item.nameKey]}
               </Link>
             );
           })}
         </nav>
 
-        <div className="border-t border-slate-800 p-4">
-          <div className="mb-3 text-sm">
-            <div className="font-medium text-white">{userName}</div>
-            <div className="text-slate-400 capitalize">
+        {/* Bottom Section */}
+        <div className="border-t border-white/10 p-4 space-y-4">
+          {/* Language Switcher */}
+          <div className="flex justify-center">
+            <LanguageSwitcher />
+          </div>
+
+          {/* User Info */}
+          <div className="text-center">
+            <div className="font-medium text-white text-base">{userName}</div>
+            <div className="text-white/50 capitalize text-sm">
               {userRole?.replace("_", " ") || "Staff"}
             </div>
           </div>
+
+          {/* Sign Out Button */}
           <Button
             variant="outline"
-            className="w-full bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="w-full bg-transparent border-white/20 text-white/70 hover:bg-white/10 hover:text-white hover:border-white/30"
             size="sm"
             onClick={handleSignOut}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
+            {t.dashboard.signOut}
           </Button>
         </div>
       </div>
