@@ -97,7 +97,7 @@ export function FooterCTA() {
                     href="/login"
                     className="text-white/50 hover:text-brand-orange transition-colors"
                   >
-                    {t.nav.staffLogin}
+                    {t.nav.login}
                   </Link>
                 </li>
               </ul>

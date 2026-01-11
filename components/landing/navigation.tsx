@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, ChevronDown, User, QrCode, LogIn } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -73,16 +73,7 @@ export function Navigation() {
                     className="flex items-center gap-2 text-white hover:!text-brand-orange cursor-pointer text-base py-2"
                   >
                     <LogIn className="h-5 w-5" />
-                    {t.nav.staffLogin}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/my-qr"
-                    className="flex items-center gap-2 text-white hover:!text-brand-orange cursor-pointer text-base py-2"
-                  >
-                    <QrCode className="h-5 w-5" />
-                    {t.nav.memberCheckin}
+                    {t.nav.login}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -134,14 +125,7 @@ export function Navigation() {
                   className="flex items-center gap-2 text-white/80 hover:text-brand-orange text-lg"
                 >
                   <LogIn className="h-5 w-5" />
-                  {t.nav.staffLogin}
-                </Link>
-                <Link
-                  href="/my-qr"
-                  className="flex items-center gap-2 text-white/80 hover:text-brand-orange text-lg"
-                >
-                  <QrCode className="h-5 w-5" />
-                  {t.nav.memberCheckin}
+                  {t.nav.login}
                 </Link>
                 <Link
                   href="/signup"

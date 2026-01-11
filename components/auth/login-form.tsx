@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useLanguage } from "@/lib/i18n";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/admin";
+  const redirectTo = searchParams.get("redirectTo");
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +37,27 @@ export function LoginForm() {
       }
 
       if (data.user) {
-        router.push(redirectTo);
+        // If there's an explicit redirect, use it
+        if (redirectTo) {
+          router.push(redirectTo);
+          router.refresh();
+          return;
+        }
+
+        // Check if user is an admin
+        const { data: admin } = await supabase
+          .from("admins")
+          .select("id")
+          .eq("id", data.user.id)
+          .single();
+
+        if (admin) {
+          // User is an admin, redirect to admin dashboard
+          router.push("/admin");
+        } else {
+          // User is a member, redirect to member area
+          router.push("/my-qr");
+        }
         router.refresh();
       }
     } catch {
@@ -49,15 +71,15 @@ export function LoginForm() {
     <div className="w-full bg-brand-navy-light border border-white/10 rounded-2xl p-8">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-white mb-2">
-          F50 Gym&apos;e Hoşgeldiniz
+          {t.auth.login.title}
         </h1>
-        <p className="text-white/60">Hesabınıza giriş yapın</p>
+        <p className="text-white/60">{t.auth.login.subtitle}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-white/80">
-            E-posta
+            {t.auth.login.email}
           </Label>
           <Input
             id="email"
@@ -72,7 +94,7 @@ export function LoginForm() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="password" className="text-white/80">
-            Şifre
+            {t.auth.login.password}
           </Label>
           <Input
             id="password"
@@ -89,7 +111,7 @@ export function LoginForm() {
             href="/forgot-password"
             className="text-brand-orange hover:underline"
           >
-            Şifrenizi mi unuttunuz?
+            {t.auth.login.forgotPassword}
           </Link>
         </div>
 
@@ -98,13 +120,13 @@ export function LoginForm() {
           className="w-full bg-brand-orange hover:bg-brand-orange-hover text-white font-semibold py-6"
           disabled={loading}
         >
-          {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+          {loading ? t.auth.login.signingIn : t.auth.login.signIn}
         </Button>
 
         <div className="text-sm text-center text-white/60">
-          Hesabınız yok mu?{" "}
+          {t.auth.login.noAccount}{" "}
           <Link href="/signup" className="text-brand-orange hover:underline">
-            Kayıt ol
+            {t.auth.login.signUp}
           </Link>
         </div>
       </form>

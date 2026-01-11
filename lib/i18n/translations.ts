@@ -339,8 +339,7 @@ export const translations = {
       pricing: "Pricing",
       testimonials: "Testimonials",
       getStarted: "Get Started",
-      staffLogin: "Staff Login",
-      memberCheckin: "Member Check-in",
+      login: "Log In",
       signUp: "Sign Up",
     },
     // Hero
