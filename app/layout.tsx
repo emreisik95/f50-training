@@ -24,16 +24,17 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "F50 Training",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1a1a2e",
+  themeColor: "#0f0f1a",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

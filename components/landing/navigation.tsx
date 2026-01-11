@@ -25,7 +25,7 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-brand-navy/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-brand-navy/90 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
       <div className="container mx-auto px-4">
         <div className="flex h-24 items-center justify-between">
           {/* Logo */}
