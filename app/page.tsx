@@ -1,24 +1,27 @@
-"use client";
+import { createClient } from "@/lib/supabase/server";
+import { LandingPage } from "@/components/landing/landing-page";
 
-import { Navigation } from "@/components/landing/navigation";
-import { Hero } from "@/components/landing/hero";
-import { Features } from "@/components/landing/features";
-import { Pricing } from "@/components/landing/pricing";
-import { Testimonials } from "@/components/landing/testimonials";
-import { FooterCTA } from "@/components/landing/footer-cta";
-import { LanguageProvider } from "@/lib/i18n";
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  validity_days: number;
+  is_active: boolean;
+  type: string;
+  includes_classes: boolean;
+}
 
-export default function HomePage() {
-  return (
-    <LanguageProvider>
-      <div className="min-h-screen bg-brand-navy">
-        <Navigation />
-        <Hero />
-        <Features />
-        <Pricing />
-        <Testimonials />
-        <FooterCTA />
-      </div>
-    </LanguageProvider>
-  );
+export default async function HomePage() {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("plans")
+    .select("id, name, price, validity_days, is_active, type, includes_classes")
+    .eq("is_active", true)
+    .order("price", { ascending: true })
+    .limit(3);
+
+  const plans = (data || []) as Plan[];
+
+  return <LandingPage plans={plans} />;
 }

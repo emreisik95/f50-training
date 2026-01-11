@@ -6,38 +6,90 @@ import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
-const prices = {
-  basic: "xxx",
-  pro: "xxx",
-  elite: "xxx",
-};
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  validity_days: number;
+  is_active: boolean;
+  type: string;
+  includes_classes: boolean;
+}
 
-export function Pricing() {
-  const { t } = useLanguage();
+interface PricingProps {
+  plans: Plan[];
+}
 
-  const plans = [
-    {
-      name: t.pricing.basic.name,
-      price: prices.basic,
-      description: t.pricing.basic.description,
-      features: t.pricing.basic.features,
-      highlighted: false,
-    },
-    {
-      name: t.pricing.pro.name,
-      price: prices.pro,
-      description: t.pricing.pro.description,
-      features: t.pricing.pro.features,
-      highlighted: true,
-    },
-    {
-      name: t.pricing.elite.name,
-      price: prices.elite,
-      description: t.pricing.elite.description,
-      features: t.pricing.elite.features,
-      highlighted: false,
-    },
-  ];
+export function Pricing({ plans }: PricingProps) {
+  const { t, language } = useLanguage();
+
+  // Generate features based on plan type
+  const getFeatures = (plan: Plan): string[] => {
+    const baseFeatures = language === "tr"
+      ? [
+          `${plan.validity_days} gün geçerlilik`,
+          "Mobil QR giriş",
+        ]
+      : [
+          `${plan.validity_days} days validity`,
+          "Mobile QR check-in",
+        ];
+
+    if (plan.includes_classes) {
+      baseFeatures.push(language === "tr" ? "Grup dersleri dahil" : "Group classes included");
+    }
+
+    // Add more features based on plan type
+    if (plan.type === "pro" || plan.type === "premium") {
+      baseFeatures.push(
+        language === "tr" ? "Tüm ekipman kullanımı" : "Full equipment access",
+        language === "tr" ? "Sınırsız giriş" : "Unlimited entry"
+      );
+    }
+
+    if (plan.type === "elite" || plan.type === "vip") {
+      baseFeatures.push(
+        language === "tr" ? "Özel antrenör indirimi" : "Personal trainer discount",
+        language === "tr" ? "Öncelikli ders rezervasyonu" : "Priority class booking",
+        language === "tr" ? "Misafir geçişleri" : "Guest passes"
+      );
+    }
+
+    return baseFeatures;
+  };
+
+  // Fallback to static plans if no database plans
+  const displayPlans = plans.length > 0
+    ? plans.map((plan, index) => ({
+        name: plan.name,
+        price: plan.price,
+        description: plan.type,
+        features: getFeatures(plan),
+        highlighted: index === 1, // Middle plan is highlighted
+      }))
+    : [
+        {
+          name: t.pricing.basic.name,
+          price: 0,
+          description: t.pricing.basic.description,
+          features: t.pricing.basic.features,
+          highlighted: false,
+        },
+        {
+          name: t.pricing.pro.name,
+          price: 0,
+          description: t.pricing.pro.description,
+          features: t.pricing.pro.features,
+          highlighted: true,
+        },
+        {
+          name: t.pricing.elite.name,
+          price: 0,
+          description: t.pricing.elite.description,
+          features: t.pricing.elite.features,
+          highlighted: false,
+        },
+      ];
 
   return (
     <section id="pricing" className="py-24 bg-brand-navy">
@@ -54,7 +106,7 @@ export function Pricing() {
 
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
-          {plans.map((plan, index) => (
+          {displayPlans.map((plan, index) => (
             <div
               key={index}
               className={`relative rounded-2xl p-8 ${
@@ -75,10 +127,10 @@ export function Pricing() {
                 <h3 className="text-xl font-bold text-white mb-2">
                   {plan.name}
                 </h3>
-                <p className="text-sm text-white/50 mb-4">{plan.description}</p>
+                <p className="text-sm text-white/50 mb-4 capitalize">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-5xl font-extrabold text-brand-orange">
-                    {plan.price} ₺
+                    {plan.price.toLocaleString("tr-TR")} ₺
                   </span>
                   <span className="text-white/50">{t.pricing.perMonth}</span>
                 </div>
